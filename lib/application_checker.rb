@@ -2,6 +2,8 @@ require 'open3'
 
 module Rails
   module Upgrading
+    RbConfig = Config if defined? Config
+
     class ApplicationChecker
       def initialize
         @issues = []
@@ -383,7 +385,7 @@ module Rails
       # TODO: Figure out if this works on Windows.
       def grep_for(text, where = "./", double_quote = false, perl_regex = false)
         # If they're on Windows, they probably don't have grep.
-        @probably_has_grep ||= (Config::CONFIG['host_os'].downcase =~ /mswin|windows|mingw/).nil?
+        @probably_has_grep ||= (RbConfig::CONFIG['host_os'].downcase =~ /mswin|windows|mingw/).nil?
 
         # protect against double root paths in Rails 3
         where.gsub!(Regexp.new(base_path),'')
@@ -467,7 +469,7 @@ module Rails
 
       # Show an upgrade alert to the user
       def alert(title, text, more_info_url, culprits)
-        if Config::CONFIG['host_os'].downcase =~ /mswin|windows|mingw/
+        if RbConfig::CONFIG['host_os'].downcase =~ /mswin|windows|mingw/
           basic_alert(title, text, more_info_url, culprits)
         else
           color_alert(title, text, more_info_url, culprits)
